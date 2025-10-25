@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="hr" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Listić</title>
+        <link rel="stylesheet" th:href="@{/styles.css}">
+    </head>
+    <body>
+        <header>
+            <h1>Loto 6/45</h1>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/oauth2/authorization/auth0">Prijava</a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <span th:text="${username}"></span>
+                <a href="/logout">Odjava</a>
+            </div>
+        </header>
+
+        <section class="round-section">
+            <h2>Podatci o listiću</h2>
+
+            <p>
+                <strong>Broj osobne iskaznice/putovnice: </strong>
+                <span th:text="${ticket.idCardNumber}"></span>
+            </p>
+
+            <p>
+                <strong>Kupljen: </strong>
+                <span th:text="${#temporals.format(ticket.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+            </p>
+
+            <p>
+                <strong>Odabrani brojevi:</strong>
+                <span th:each="num: ${ticket.numbers}">
+                    <span th:text="${num + ' '}"></span>
+                </span>
+            </p>
+
+            <p>
+                <strong>Izvučeni brojevi u kolu:</strong>
+                <span th:each="num: ${ticket.roundDto.numbers}">
+                    <span th:text="${num + ' '}"></span>
+                </span>
+            </p>
+        </section>
+
+        <footer class="btn-center">
+            <a href="/" class="btn-ticket">Povratak na početnu stranicu</a>
+        </footer>
+    </body>
+</html>

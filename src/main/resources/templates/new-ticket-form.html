@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="hr" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Novi listić</title>
+        <link rel="stylesheet" th:href="@{/styles.css}">
+    </head>
+    <body>
+        <header>
+            <h1>Loto 6/45</h1>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/oauth2/authorization/auth0">Prijava</a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <span th:text="${username}"></span>
+                <a href="/logout">Odjava</a>
+            </div>
+        </header>
+
+        <form sec:authorize="isAuthenticated()"
+              th:action="@{/new-ticket}" method="post" th:object="${predictions}"
+              class="round-section">
+            <label class="form-label">
+                <strong>Broj osobne iskaznice ili putovnice:</strong>
+                <input type="text" th:field="*{idCardNumber}" required class="form-input"/>
+            </label>
+            <label class="form-label">
+                <strong>6 do 10 različitih brojeva od 1 do 45 odvojenih zarezom:</strong>
+                <input type="text" th:field="*{commaSeparatedNumbers}" required class="form-input"/>
+            </label>
+
+            <p th:if="${errMsg != null}" th:text="${errMsg}" class="error-message"></p>
+
+            <div class="btn-center">
+                <button type="submit" class="btn-ticket">Uplati Listić</button>
+            </div>
+        </form>
+
+        <footer class="btn-center">
+            <a href="/" class="btn-ticket">Povratak na početnu stranicu</a>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hr" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Početna</title>
+        <link rel="stylesheet" th:href="@{/styles.css}">
+    </head>
+    <body>
+        <header>
+            <h1>Loto 6/45</h1>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/oauth2/authorization/auth0">Prijava</a>
+            </div>
+            <div sec:authorize="isAuthenticated()">
+                <span th:text="${username}"></span>
+                <a href="/logout">Odjava</a>
+            </div>
+        </header>
+
+        <section th:if="${round != null}" class="round-section">
+            <div>
+                <strong>Uplate omogućene od: </strong>
+                <span th:text="${#temporals.format(round.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                <strong th:if="${round.closedAt != null}"> do: </strong>
+                <span th:if="${round.closedAt != null}" th:text="${#temporals.format(round.closedAt, 'dd.MM.yyyy HH:mm')}"></span>
+            </div>
+
+            <p>
+                <strong>Broj kupljenih listića u trenutnom kolu: </strong>
+                <span th:text="${numberOfTickets}"></span>
+            </p>
+
+            <p th:if="${round.numbers != null}">
+                <strong>Izvučeni brojevi u kolu: </strong>
+                <span th:each="num: ${round.numbers}">
+                    <span th:text="${num + ' '}"></span>
+                </span>
+            </p>
+
+            <div sec:authorize="isAuthenticated()" class="btn-center">
+                <a th:if="${round.closedAt == null}" href="/new-ticket" class="btn-ticket">
+                    Kupi novi listić
+                </a>
+            </div>
+        </section>
+
+        <section sec:authorize="isAuthenticated()" th:if="${round != null}" class="ticket-section">
+            <h2>Vaši listići u ovom kolu</h2>
+
+            <div th:if="${#lists.isEmpty(tickets)}">
+                Još nema uplaćenih listića.
+            </div>
+            <ul th:if="${!#lists.isEmpty(tickets)}" class="ticket-list">
+                <li th:each="ticket : ${tickets}" class="ticket-item">
+                    <strong>Kupljen: </strong>
+                    <span th:text="${#temporals.format(ticket.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                    <br/>
+                    <img th:src="'data:image/png;base64,' + ${ticket.qrBase64}" alt="QR kod listića"/>
+                </li>
+            </ul>
+        </section>
+    </body>
+</html>
